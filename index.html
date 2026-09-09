@@ -215,9 +215,7 @@
   <section id="inicio" class="active">
     <p class="section-eyebrow">Esta xornada</p>
     <h2 class="section-title">Partidos do fin de semana</h2>
-    <p class="section-sub">Consulta aquí os partidos programados para todas as categorías. 
-      En Amarelo = xogamos na casa (A Rega / Pontepedra / Cabaleiros). 
-      En Negro = xogamos fóra.</p>
+    <p class="section-sub">Consulta aquí os partidos programados para todas as categorías. Fondo amarllo = xogamos na casa (A Rega / Pontepedra / Cabaleiros). Fondo negro = xogamos fóra.</p>
 
     <div class="legend">
       <div class="legend-item"><span class="legend-swatch home"></span> Partido en casa</div>
@@ -284,7 +282,8 @@ const TEAMS = [
 
 // Exemplo de estrutura para cando comece a tempada (deixar baleiro [] mentres non haxa xogos)
 const MATCHES = [
-  // { teamId:"cadete", jornada:1, fecha:"2026-09-13", hora:"17:00", campo:"casa", rival:"CD Exemplo", score:null },
+  { teamId:"cadete", jornada:1, fecha:"2026-09-13", hora:"10:00", campo:"fora", rival:"Milladoiro S.D.", score:null },
+  { teamId:"cadete", jornada:2, fecha:"2026-09-20", hora:"por confirmar", campo:"casa", rival:"Xuventude Oroso", score:null },
 ];
 
 /* ===================================================================== */
@@ -308,7 +307,7 @@ function matchCard(m){
         <div class="meta">${casa ? 'Xogo en casa' : 'Xogo fóra'} · Xornada ${m.jornada}</div>
       </div>
       <div class="score">${scoreHtml}</div>
-      <div class="when">${fmtFecha(m.fecha)}<br>${m.hora}h</div>
+      <div class="when">${fmtFecha(m.fecha)}<br>${m.hora === "por confirmar" ? "hora por confirmar" : m.hora + "h"}</div>
     </div>`;
 }
 
