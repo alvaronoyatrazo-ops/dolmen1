@@ -176,6 +176,20 @@
   .team-stone h3{ font-size:24px; margin-top:6px; color:var(--home-gold); }
   .team-stone .comp{ font-size:13px; color:var(--parchment-dark); margin-top:4px; }
 
+
+  /* --- clasificación --- */
+  .table-wrap{ overflow-x:auto; border:1px solid var(--line); border-radius:8px; background:#fff; }
+  table.clasif{ width:100%; border-collapse:collapse; font-size:14px; min-width:520px; }
+  table.clasif th{
+    font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.06em; text-transform:uppercase;
+    text-align:center; padding:10px 8px; background:var(--stone); color:var(--parchment); white-space:nowrap;
+  }
+  table.clasif th.left, table.clasif td.left{ text-align:left; }
+  table.clasif td{ padding:9px 8px; text-align:center; border-top:1px solid var(--line); font-variant-numeric:tabular-nums; }
+  table.clasif td.pts{ font-weight:700; }
+  table.clasif tr.dolmen td{ background:var(--home-gold); color:var(--away-ink); font-weight:600; border-top-color:transparent; }
+  .clasif-note{ font-size:12.5px; color:var(--stone-light); margin-top:12px; }
+
   footer{
     text-align:center; padding:24px; color:var(--stone-light); font-size:12.5px;
     border-top:1px solid var(--line);
@@ -204,6 +218,7 @@
   <nav>
     <button data-tab="inicio" class="active">Inicio</button>
     <button data-tab="calendario">Calendario</button>
+    <button data-tab="clasificacion">Clasificación</button>
     <button data-tab="equipos">Equipos</button>
     <button data-tab="torneo">Torneo</button>
   </nav>
@@ -236,6 +251,18 @@
     </div>
 
     <div id="calendar-matches" class="match-grid"></div>
+  </section>
+
+  <!-- CLASIFICACIÓN -->
+  <section id="clasificacion">
+    <p class="section-eyebrow">Tempada 2026/27</p>
+    <h2 class="section-title">Clasificación</h2>
+    <p class="section-sub">Táboa do grupo de cada equipo. O Dolmen vai destacado en amarelo.</p>
+    <div class="filter-row">
+      <select id="clasif-filter"></select>
+    </div>
+    <div id="clasif-table"></div>
+    <p class="clasif-note" id="clasif-note"></p>
   </section>
 
   <!-- EQUIPOS -->
@@ -281,9 +308,9 @@ const TEAMS = [
 
 // Exemplo de estrutura para cando comece a tempada (deixar baleiro [] mentres non haxa xogos)
 const MATCHES = [
-  { teamId:"xuvenil", jornada:1, fecha:"2026-09-12", hora:"17:00", campo:"fora", rival:"Milladoiro S.D. 'B'", score:null },
-  { teamId:"xuvenil", jornada:2, fecha:"2026-09-19", hora:"por confirmar", campo:"casa", rival:"Amio S.D. 'B'", score:null },
-  { teamId:"xuvenil", jornada:3, fecha:"2026-09-26", hora:"por confirmar", campo:"casa", rival:"S.R. Calo", score:null },
+  { teamId:"xuvenil", jornada:1, fecha:"2026-09-12", hora:"17:00", campo:"fora", rival:"Milladoiro S.D. 'B'", score:{local:3, visitante:7} },
+  { teamId:"xuvenil", jornada:2, fecha:"2026-09-19", hora:"por confirmar", campo:"casa", rival:"Amio S.D. 'B'", score:{local:0, visitante:0} },
+  { teamId:"xuvenil", jornada:3, fecha:"2026-09-26", hora:"17:00", campo:"casa", rival:"S.R. Calo", score:{local:3, visitante:1} },
   { teamId:"xuvenil", jornada:4, fecha:"2026-10-03", hora:"por confirmar", campo:"fora", rival:"Bertamiráns C.F. 'C'", score:null },
   { teamId:"xuvenil", jornada:5, fecha:"2026-10-17", hora:"por confirmar", campo:"casa", rival:"Cidade de Ribeira C.F. 'B'", score:null },
   { teamId:"xuvenil", jornada:6, fecha:"2026-10-24", hora:"por confirmar", campo:"fora", rival:"A.D. Manuel Peleteiro", score:null },
@@ -311,9 +338,9 @@ const MATCHES = [
   { teamId:"xuvenil", jornada:28, fecha:"2027-05-01", hora:"por confirmar", campo:"fora", rival:"S.D. Villestro", score:null },
   { teamId:"xuvenil", jornada:29, fecha:"2027-05-08", hora:"por confirmar", campo:"casa", rival:"Vedra-Boqueixón E.D.", score:null },
   { teamId:"xuvenil", jornada:30, fecha:"2027-05-15", hora:"por confirmar", campo:"fora", rival:"Porto do Son C.F.", score:null },
-  { teamId:"cadete", jornada:1, fecha:"2026-09-13", hora:"10:00", campo:"fora", rival:"Milladoiro S.D.", score:null },
-  { teamId:"cadete", jornada:2, fecha:"2026-09-20", hora:"por confirmar", campo:"casa", rival:"E.D. Xuventude Oroso", score:null },
-  { teamId:"cadete", jornada:3, fecha:"2026-09-27", hora:"por confirmar", campo:"fora", rival:"E.F.M Concello de Boiro 'B'", score:null },
+  { teamId:"cadete", jornada:1, fecha:"2026-09-13", hora:"10:00", campo:"fora", rival:"Milladoiro S.D.", score:{local:6, visitante:2} },
+  { teamId:"cadete", jornada:2, fecha:"2026-09-20", hora:"por confirmar", campo:"casa", rival:"E.D. Xuventude Oroso", score:{local:0, visitante:10} },
+  { teamId:"cadete", jornada:3, fecha:"2026-09-27", hora:"11:30", campo:"fora", rival:"E.F.M Concello de Boiro 'B'", score:{local:6, visitante:2} },
   { teamId:"cadete", jornada:4, fecha:"2026-10-04", hora:"por confirmar", campo:"casa", rival:"C.D. Conxo Santiago 'B'", score:null },
   { teamId:"cadete", jornada:5, fecha:"2026-10-18", hora:"por confirmar", campo:"fora", rival:"S.D. Negreira", score:null },
   { teamId:"cadete", jornada:6, fecha:"2026-10-25", hora:"por confirmar", campo:"casa", rival:"Amio S.D.", score:null },
@@ -341,7 +368,70 @@ const MATCHES = [
   { teamId:"cadete", jornada:28, fecha:"2027-05-02", hora:"por confirmar", campo:"fora", rival:"Sociedade Deportiva O Pino", score:null },
   { teamId:"cadete", jornada:29, fecha:"2027-05-09", hora:"por confirmar", campo:"casa", rival:"Victoria F.C. 'B'", score:null },
   { teamId:"cadete", jornada:30, fecha:"2027-05-16", hora:"por confirmar", campo:"fora", rival:"E.F. Lalín", score:null },
+  { teamId:"infantil-a", jornada:1, fecha:"2026-09-12", hora:"por confirmar", campo:"fora", rival:"S.D. Compostela 'B'", score:{local:5, visitante:3} },
+  { teamId:"infantil-a", jornada:2, fecha:"2026-09-19", hora:"por confirmar", campo:"casa", rival:"Boqueixón Escola Deportiva Vedra", score:{local:1, visitante:4} },
+  { teamId:"infantil-a", jornada:3, fecha:"2026-09-26", hora:"13:00", campo:"fora", rival:"E.D.S. Santa Marta", score:{local:2, visitante:1} },
 ];
+
+
+/* Clasificacións (fonte: Futbuteo, non oficial). Columnas: pos, equipo, Pts, PX, PG, PE, PP, GF, GC */
+const ACTUALIZADO = "27 set 2026 (despois da xornada 3)";
+const CLASIF = {
+  "xuvenil": { grupo:"Xuvenil 2ª FUTGAL · Grupo Santiago", xornada:3, filas:[
+      [1, "S.D. Cruces", 9, 3, 3, 0, 0, 12, 6],
+      [2, "Escola Deportiva O Dolmen de Tordoia", 7, 3, 2, 1, 0, 10, 4],
+      [3, "Porto do Son C.F.", 7, 3, 2, 1, 0, 9, 7],
+      [4, "S.D. Negreira", 6, 3, 2, 0, 1, 10, 6],
+      [5, "Puebla F.C.", 6, 3, 2, 0, 1, 7, 4],
+      [6, "S.D. Cacheiras", 6, 3, 2, 0, 1, 9, 5],
+      [7, "A.D. Manuel Peleteiro", 6, 3, 2, 0, 1, 8, 5],
+      [8, "Cidade de Ribeira C.F. 'B'", 5, 3, 1, 2, 0, 8, 4],
+      [9, "Boqueixón Escola Deportiva Vedra", 4, 3, 1, 1, 1, 7, 6],
+      [10, "Racing San Lorenzo", 3, 3, 1, 0, 2, 5, 13],
+      [11, "S.R. Calo", 3, 3, 1, 0, 2, 8, 7],
+      [12, "Bertamiráns C.F. 'C'", 3, 3, 1, 0, 2, 6, 7],
+      [13, "Escola de Fútbol Silleda", 3, 3, 1, 0, 2, 6, 5],
+      [14, "Amio S.D. 'B'", 1, 3, 0, 1, 2, 4, 8],
+      [15, "Milladoiro S.D. 'B'", 0, 3, 0, 0, 3, 4, 14],
+      [16, "S.D. Villestro", 0, 3, 0, 0, 3, 0, 12]
+  ]},
+  "cadete": { grupo:"Cadete 1ª FUTGAL · Grupo Santiago", xornada:3, filas:[
+      [1, "E.D. Xuventude Oroso", 9, 3, 3, 0, 0, 28, 0],
+      [2, "C.D. Conxo Santiago 'B'", 9, 3, 3, 0, 0, 23, 1],
+      [3, "E.F. Lalín", 9, 3, 3, 0, 0, 16, 2],
+      [4, "Atlético Fátima", 9, 3, 3, 0, 0, 10, 7],
+      [5, "E.F.M Concello de Boiro 'B'", 6, 3, 2, 0, 1, 12, 7],
+      [6, "Milladoiro S.D.", 6, 3, 2, 0, 1, 11, 6],
+      [7, "S.D. Negreira", 6, 3, 2, 0, 1, 9, 6],
+      [8, "Bertamiráns F.C. 'B'", 4, 3, 1, 1, 1, 7, 5],
+      [9, "Amio S.D.", 4, 3, 1, 1, 1, 7, 7],
+      [10, "Ulla Pontecesures C.F.", 3, 3, 1, 0, 2, 11, 7],
+      [11, "C.F. Cire de Melide", 3, 3, 1, 0, 2, 3, 14],
+      [12, "Victoria F.C. 'B'", 3, 3, 1, 0, 2, 5, 14],
+      [13, "A.D. Manuel Peleteiro", 0, 3, 0, 0, 3, 3, 12],
+      [14, "Escola Deportiva O Dolmen de Tordoia", 0, 3, 0, 0, 3, 4, 22],
+      [15, "C.D. Sar Extramundi", 0, 3, 0, 0, 3, 4, 23],
+      [16, "Sociedade Deportiva O Pino", 0, 3, 0, 0, 3, 0, 20]
+  ]},
+  "infantil-a": { grupo:"Infantil 1ª FUTGAL · Grupo Santiago", xornada:3, nota:"Boqueixón e A.D. Manuel Peleteiro teñen un partido menos xogado.", filas:[
+      [1, "Ulla Pontecesures C.F.", 9, 3, 3, 0, 0, 15, 3],
+      [2, "A.D. Nicrariense", 9, 3, 3, 0, 0, 10, 2],
+      [3, "S.D. Compostela 'B'", 7, 3, 2, 1, 0, 11, 6],
+      [4, "S.D. Villestro", 6, 3, 2, 0, 1, 12, 4],
+      [5, "Amio S.D.", 6, 3, 2, 0, 1, 12, 5],
+      [6, "S.R. Calo", 5, 3, 1, 2, 0, 13, 3],
+      [7, "Boqueixón Escola Deportiva Vedra", 4, 2, 1, 1, 0, 6, 3],
+      [8, "E.F. Lalín 'B'", 4, 3, 1, 1, 1, 8, 6],
+      [9, "Bertamiráns F.C. 'B'", 4, 3, 1, 1, 1, 6, 3],
+      [10, "A.D. Manuel Peleteiro", 3, 2, 1, 0, 1, 4, 6],
+      [11, "Atlético Fátima", 3, 3, 1, 0, 2, 10, 13],
+      [12, "E.D.S. Santa Marta", 3, 3, 1, 0, 2, 4, 10],
+      [13, "Victoria F.C. 'B'", 1, 3, 0, 1, 2, 3, 12],
+      [14, "E.F.M Concello de Boiro 'B'", 1, 3, 0, 1, 2, 4, 15],
+      [15, "Escola Deportiva O Dolmen de Tordoia", 0, 3, 0, 0, 3, 5, 11],
+      [16, "Cidade de Ribeira C.F. 'B'", 0, 3, 0, 0, 3, 1, 22]
+  ]}
+};
 
 /* ===================================================================== */
 
@@ -382,10 +472,20 @@ function renderInicio(){
     );
     return;
   }
-  // ordena por data e coge a próxima xornada dispoñible
+  // colle a primeira data igual ou posterior a hoxe e mostra os xogos desa fin de semana
+  const hoxe = new Date(); hoxe.setHours(0,0,0,0);
+  const iso = d => d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
   const sorted = [...MATCHES].sort((a,b)=> a.fecha.localeCompare(b.fecha));
-  const proximaFecha = sorted[0].fecha;
-  const proximos = sorted.filter(m => m.fecha === proximaFecha || Math.abs(new Date(m.fecha)-new Date(proximaFecha)) < 3*86400000);
+  const futuros = sorted.filter(m => m.fecha >= iso(hoxe));
+  if(futuros.length === 0){
+    el.innerHTML = emptyState(
+      "Sen máis partidos programados",
+      "Non hai xogos pendentes no calendario. Consulta o calendario completo ou a web da RFGF."
+    );
+    return;
+  }
+  const primeira = new Date(futuros[0].fecha+"T00:00:00");
+  const proximos = futuros.filter(m => (new Date(m.fecha+"T00:00:00") - primeira) < 3*86400000);
   el.innerHTML = proximos.map(matchCard).join('');
 }
 
@@ -404,7 +504,7 @@ function renderCalendario(){
   if(filtered.length === 0){
     el.innerHTML = emptyState(
       "Sen partidos rexistrados",
-      "Cando a RFGF publique o calendario da tempada, aparecerán aquí todos os partidos e resultados dese equipo."
+      "Este equipo aínda non ten partidos cargados. Engadiranse en canto a RFGF publique o calendario."
     );
     return;
   }
@@ -424,6 +524,36 @@ function renderEquipos(){
   `).join('');
 }
 
+
+// --- CLASIFICACIÓN ---
+function renderClasifFiltro(){
+  const sel = document.getElementById('clasif-filter');
+  sel.innerHTML = TEAMS.map(t=>`<option value="${t.id}">${t.nombre} — ${t.comp}</option>`).join('');
+  sel.addEventListener('change', renderClasif);
+}
+function renderClasif(){
+  const id = document.getElementById('clasif-filter').value;
+  const el = document.getElementById('clasif-table');
+  const note = document.getElementById('clasif-note');
+  const c = CLASIF[id];
+  if(!c){
+    el.innerHTML = emptyState("Clasificación non dispoñible aínda", "Este grupo aínda non está cargado en Futbuteo. Engadirase en canto haxa datos.");
+    note.textContent = "";
+    return;
+  }
+  const filas = c.filas.map(f=>`
+    <tr class="${f[1].includes('Dolmen') ? 'dolmen' : ''}">
+      <td>${f[0]}</td><td class="left">${f[1]}</td><td class="pts">${f[2]}</td>
+      <td>${f[3]}</td><td>${f[4]}</td><td>${f[5]}</td><td>${f[6]}</td><td>${f[7]}</td><td>${f[8]}</td><td>${f[7]-f[8]>0?'+':''}${f[7]-f[8]}</td>
+    </tr>`).join('');
+  el.innerHTML = `
+    <div class="table-wrap"><table class="clasif">
+      <thead><tr><th>#</th><th class="left">${c.grupo}</th><th>Pts</th><th>PX</th><th>G</th><th>E</th><th>P</th><th>GF</th><th>GC</th><th>DG</th></tr></thead>
+      <tbody>${filas}</tbody>
+    </table></div>`;
+  note.textContent = (c.nota ? c.nota + " " : "") + "Fonte: Futbuteo (datos non oficiais). Actualizado: " + ACTUALIZADO + ".";
+}
+
 // --- NAV ---
 document.querySelectorAll('nav button').forEach(btn=>{
   btn.addEventListener('click', ()=>{
@@ -438,6 +568,8 @@ renderInicio();
 renderFiltro();
 renderCalendario();
 renderEquipos();
+renderClasifFiltro();
+renderClasif();
 </script>
 
 </body>
